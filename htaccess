@@ -1,0 +1,6 @@
+# rename to .htaccess and adjust THE-URL and THE-FOLDER
+RewriteEngine on
+RewriteCond %{HTTP_HOST} ^THE-URL$ [NC,OR]
+RewriteCond %{HTTP_HOST} ^www.THE-URL$
+RewriteCond %{REQUEST_URI} !THE-FOLDER/
+RewriteRule (.*) /THE-FOLDER/$1 [L]
