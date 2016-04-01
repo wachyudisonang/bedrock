@@ -26,39 +26,33 @@ $environments = array(
 	'staging' => array('demo.')
 );
 
-// Get Server name
-$server_name = $_SERVER['SERVER_NAME'];
-
-// Define Constants: Environment
-foreach($environments AS $key => $env){
-	if ( is_array($env) ) {
-		foreach ($env as $option) {
-			if ( stristr($server_name, $option) ) {
-				define('WP_ENV', $key);
-				break;
-			}
-		}
-	} else {
-		if ( stristr($server_name, $env) ) {
-			define('WP_ENV', $key);
-			break;
-		}
-	}
-}
-
 /**
  * Set up our global environment constant and load its config first
  * Default: development
  */
- $env_config = "";
- if (!defined('WP_ENV')) {
-	if (file_exists($root_dir . '/.env')) {
-		define('WP_ENV', env('WP_ENV') ?: 'development');
-		$env_config = __DIR__ . '/environments/' . WP_ENV . '.php';
-	} else {
-		define('WP_ENV', 'production');
-		$env_config = __DIR__ . '/environments/my-config/' . WP_ENV . '.php';
+$env_config = "";
+if (file_exists($root_dir . '/.env')) {
+	define('WP_ENV', env('WP_ENV') ?: 'development');
+	$env_config = __DIR__ . '/environments/' . WP_ENV . '.php';
+} else {
+	$server_name = $_SERVER['SERVER_NAME']; // Get Server name
+	foreach($environments AS $key => $env){ // Define Constants: Environment
+		if ( is_array($env) ) {
+			foreach ($env as $option) {
+				if ( stristr($server_name, $option) ) {
+					define('WP_ENV', $key);
+					break;
+				}
+			}
+		} else {
+			if ( stristr($server_name, $env) ) {
+				define('WP_ENV', $key);
+				break;
+			}
+		}
 	}
+	if(!defined('WP_ENV')) define('WP_ENV', 'production');
+	$env_config = __DIR__ . '/environments/my-config/' . WP_ENV . '.php';
 }
 
 if (file_exists($env_config)) {
@@ -123,7 +117,7 @@ define('NONCE_SALT',       '');
  * Bootstrap WordPress
  */
 if (!defined('ABSPATH')) {
-		define('ABSPATH', $webroot_dir . '/wp/');
+	define('ABSPATH', $webroot_dir . '/wp/');
 }
 
 /**
@@ -131,6 +125,7 @@ if (!defined('ABSPATH')) {
  */
 // print_r($_SERVER) ;
 // echo WP_ENV . "<br>";
+// echo $env_config . "<br>";
 // echo WP_HOME . "<br>";
 // echo WP_SITEURL . "<br>";
 // echo WP_CONTENT_DIR . "<br>";
